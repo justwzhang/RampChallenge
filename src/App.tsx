@@ -24,6 +24,7 @@ export function App() {
     transactionsByEmployeeUtils.invalidateData()
 
     await employeeUtils.fetchAll()
+    setIsLoading(false)
     await paginatedTransactionsUtils.fetchAll()
 
     setIsLoading(false)
@@ -64,8 +65,11 @@ export function App() {
             if (newValue === null) {
               return
             }
-
-            await loadTransactionsByEmployee(newValue.id)
+            if (newValue.id === "") {
+              await loadAllTransactions()
+            } else {
+              await loadTransactionsByEmployee(newValue.id)
+            }
           }}
         />
 
@@ -76,7 +80,7 @@ export function App() {
 
           {transactions !== null && (
             <button
-              className="RampButton"
+              className={paginatedTransactions?.nextPage ? "RampButton" : "RampButtonRemoved"}
               disabled={paginatedTransactionsUtils.loading}
               onClick={async () => {
                 await loadAllTransactions()
